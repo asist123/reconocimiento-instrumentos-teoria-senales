@@ -45,3 +45,18 @@ def grafica_tiempo():
     ejes[0].set_title("Misma nota (440 Hz) en distintos instrumentos")
     ejes[-1].set_xlabel("Tiempo (s)")
     plt.tight_layout()
+    
+def grafica_muestreo():
+    t, x = generar_nota("guitarra")
+    fs_bajas = [FS, 4000, 1500]
+    fig, ejes = plt.subplots(len(fs_bajas), 1, figsize=(9, 6), sharex=True)
+    for ax, fs_nuevo in zip(ejes, fs_bajas):
+        paso = int(FS / fs_nuevo)
+        ax.plot(t[:600], x[:600], color="lightgray", label="original")
+        ax.stem(t[:600:paso], x[:600:paso], linefmt="C1-", markerfmt="C1o",
+                basefmt=" ", label=f"fs = {fs_nuevo} Hz")
+        ax.legend(loc="upper right")
+        ax.grid(alpha=0.3)
+    ejes[0].set_title("Efecto de la frecuencia de muestreo (guitarra)")
+    ejes[-1].set_xlabel("Tiempo (s)")
+    plt.tight_layout()
