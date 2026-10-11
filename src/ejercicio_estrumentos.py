@@ -12,3 +12,25 @@ INSTRUMENTOS = {
     "guitarra": {"perfil": [1.0, 0.7, 0.5, 0.3, 0.2, 0.1],   "ataque": 0.01, "caida": 5.0},
     "violin":  {"perfil": [1.0, 0.9, 0.8, 0.6, 0.5, 0.4, 0.3], "ataque": 0.12, "caida": 1.5},
 }
+
+def generar_nota(instrumento, f0=NOTA, fs=FS, dur=DURACION):
+    """Crea una nota sumando armonicos y aplicando una envolvente."""
+    t = np.arange(int(fs * dur)) / fs
+    p = INSTRUMENTOS[instrumento]
+    x = np.zeros_like(t)
+    for k, a in enumerate(p["perfil"], start=1):
+        x += a * np.sin(2 * np.pi * k * f0 * t)
+ 
+    # envolvente: sube en el ataque y luego decae exponencialmente
+    env = np.minimum(t / p["ataque"], 1.0) * np.exp(-p["caida"] * t / dur)
+    x = x * env
+    return t, x / np.max(np.abs(x))
+ 
+ 
+def cargar_wav(ruta):
+    """Para cuando ya tengamos audios reales (.wav). Devuelve (fs, senal)."""
+    fs, x = wavfile.read(ruta)
+    if x.ndim > 1:                       # si es estereo, pasar a mono
+        x = x.mean(axis=1)
+    x = x.astype(float)
+    return fs, x / np.max(np.abs(x))
