@@ -60,3 +60,14 @@ def grafica_muestreo():
     ejes[0].set_title("Efecto de la frecuencia de muestreo (guitarra)")
     ejes[-1].set_xlabel("Tiempo (s)")
     plt.tight_layout()
+    
+def espectro(x, fs=FS):
+    ventana = np.hanning(len(x))
+    X = np.abs(np.fft.rfft(x * ventana))
+    f = np.fft.rfftfreq(len(x), 1 / fs)
+    return f, X / np.max(X)
+ 
+ 
+def frecuencia_fundamental(x, fs=FS):
+    f, X = espectro(x, fs)
+    return f[np.argmax(X)]
