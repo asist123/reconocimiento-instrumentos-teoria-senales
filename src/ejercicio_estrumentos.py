@@ -34,3 +34,14 @@ def cargar_wav(ruta):
         x = x.mean(axis=1)
     x = x.astype(float)
     return fs, x / np.max(np.abs(x))
+
+def grafica_tiempo():
+    fig, ejes = plt.subplots(len(INSTRUMENTOS), 1, figsize=(9, 6), sharex=True)
+    for ax, nombre in zip(ejes, INSTRUMENTOS):
+        t, x = generar_nota(nombre)
+        ax.plot(t, x, linewidth=0.6)
+        ax.set_ylabel(nombre)
+        ax.grid(alpha=0.3)
+    ejes[0].set_title("Misma nota (440 Hz) en distintos instrumentos")
+    ejes[-1].set_xlabel("Tiempo (s)")
+    plt.tight_layout()
